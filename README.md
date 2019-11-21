@@ -22,7 +22,7 @@ CryptaPath is licensed under the MIT License.
 
 CryptaPath provides 2 main subcommands, `cipher` and `sponge` and 2 helper commands `make-cipher-param` and `from-file`.
 
-The `cipher` command lets you build a system of BDDs for all supported ciphers for any number of rounds and try to solve it for a randomly generated pair of plaintext/ciphertext. You can also provide your own pair of plaintext/ciphertext to build your system from. A partial value of the key you are trying to find can also be provided with its unknown and guessed (known) bits. The `make-secret` command can generate those values (key, plaintext/ciphertext) for you for any cipher.
+The `cipher` command lets you build a system of BDDs for all supported ciphers for any number of rounds and try to solve it for a randomly generated pair of plaintext/ciphertext. You can also provide your own pair of plaintext/ciphertext to build your system from. A partial value of the key you are trying to find can also be provided with its unknown and guessed (known) bits. The `make-cipher-param` command can generate those values (key, plaintext/ciphertext) for you for any cipher.
 
 The `sponge` command lets you build a system of BDDs for the supported sponge hash for any number of rounds and any valid value of rate/capacity, hash length and max message length. You can provide your own hash value for which you want to find a preimage and any known or guessed bits of the message.
 
