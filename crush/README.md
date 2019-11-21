@@ -58,7 +58,7 @@ If you want the documentation for [`Node`](src/soc/node.rs) and [`Level`](src/so
 
 ## .bdd file format
 
-One of the way to load a system of Bdd is to use a .bdd file and the function [`parse_system_spec_from_file`] from the [`utils`](soc/utils.rs) module.
+One of the way to load a system of Bdd is to use a .bdd file and the function `parse_system_spec_from_file` from the [`utils`](soc/utils.rs) module.
 
 The specification for the file is as follows :
 
