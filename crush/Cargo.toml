@@ -1,0 +1,14 @@
+[package]
+name = "crush"
+version = "0.1.0"
+authors = ["Nicolas Costes <nicolas@simula.no>"]
+edition = "2018"
+
+[dependencies]
+vob = "2.0.2"
+nom = "4.2.2"
+ahash = "0.2.17"
+
+[lib]
+name = "crush"
+path = "src/lib.rs"

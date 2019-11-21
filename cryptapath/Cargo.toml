@@ -1,0 +1,16 @@
+[package]
+name = "cryptapath"
+version = "0.1.0"
+authors = ["Nicolas Costes <nicolas@simula.no>, John-Petter Indrøy <jpindroy@gmail.com>, Håvard Raddum <haavardr@simula.no>"]
+edition = "2018"
+
+[dependencies]
+crush = { path = "../crush" }
+rand = "0.7.0"
+vob = "2.0.2"
+structopt = "0.3.4"
+structopt-derive = "0.3.4"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
