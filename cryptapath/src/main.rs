@@ -200,7 +200,7 @@ fn main() {
             }
             let forbid_dropping: Vec<usize> = (0..hash.message_length()).collect();
             let mut sols = strategy::execute_strategy_by_name(
-                "UpwardDroppingSolver",
+                "drop",
                 &mut system,
                 Some(&forbid_dropping),
             )
