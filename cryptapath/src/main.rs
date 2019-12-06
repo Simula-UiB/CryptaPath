@@ -246,7 +246,7 @@ fn main() {
         CryptaPathOptions::FromFile { file } => {
             let specs = parse_system_spec_from_file(&file);
             let mut system = build_system_from_spec(specs);
-            strategy::execute_strategy_by_name("UpwardSolver", &mut system, None).unwrap();
+            strategy::execute_strategy_by_name("no_drop", &mut system, None).unwrap();
         }
     }
 }
