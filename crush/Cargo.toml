@@ -8,6 +8,8 @@ edition = "2018"
 vob = "2.0.2"
 nom = "4.2.2"
 ahash = "0.2.17"
+num-bigint = "0.3.0"
+#num-traits = "0.2.12"
 
 [lib]
 name = "crush"
