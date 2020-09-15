@@ -32,9 +32,10 @@ use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::hash::BuildHasherDefault;
 use vob::Vob;
+use num_bigint::ToBigUint;
 
 /// A `LinEq` is a linear equation found in the BDD.
-/// A level which has only outgoing 1edges or 0edges
+/// A level which has only outgoing 1-edges or 0-edges
 /// can be absorbed and its equation and value extracted as a `LinEq`.
 /// Those will be put inside a `lin_bank` (system level) and
 /// be used for solving the system at the end
@@ -188,7 +189,7 @@ impl Bdd {
         for node_id in nodes_id.iter() {
             let new_id = Id::new(**node_id * 10000 + *self.id);
             self.levels[level_index].add_new_node(new_id);
-            nodes.push(new_id);
+            nodes.push(new_id);//Why this?  Is the vector 'nodes' used for anything?
         }
     }
 
@@ -852,61 +853,58 @@ impl Bdd {
         paths
     }
 
-    /// Count the number of paths inside a `Bdd`.
+    /// Count the number of paths inside a `Bdd`.  The return value is a BigUint, as the number of paths may be huge.
     ///
-    /// To count the number of paths we go from bottom to top
+    /// To count the number of paths we go from bottom to top.
     ///
     /// We keep a map of the previous level containing a mapping from `Id` to `weight`.
-    /// `weight` is the number of path that leads to that node and is the sum of the weights
-    /// of the childs of the node. If the weight of a child is zero the child is the sink
+    /// `weight` is the number of path that leads from that node to the sink and is the sum of the weights
+    /// of the children of the node. If the weight of a child is zero the child is the sink
     /// therefore 0 -> 1 path.
     ///
     /// When we reach the top the `previous_level_weight` will contain only the top node
     /// So we can grab it and its weight will be the number of paths of the bdd
     /// If the bdd is only a sink (number of level < 2), we return `0`
-    pub fn count_paths(&self) -> u128 {
-        let mut previous_level_weigths: HashMap<Id, u128, BuildHasherDefault<ahash::AHasher>> =
+    pub fn count_paths(&self) -> num_bigint::BigUint {
+        let mut previous_level_weigths: HashMap<Id, num_bigint::BigUint, BuildHasherDefault<ahash::AHasher>> =
             AHashMap::with_hasher(Default::default());
         if self.levels.len() < 2 {
-            return 0;
+            return 0.to_biguint().unwrap();
         }
         for level in self.iter_levels().rev() {
             let mut current_level_weigths = AHashMap::with_hasher(Default::default());
             for (id, node) in level.iter_nodes() {
-                let weight = match node.get_e0() {
+                let weight0 = match node.get_e0() {
                     Some(e0_id) => match previous_level_weigths.get(&e0_id) {
                         Some(weight) => {
-                            if *weight == 0 {
-                                1
+                            if *weight == 0.to_biguint().unwrap() {
+                                1.to_biguint().unwrap()
                             } else {
-                                *weight
+                                weight.clone()
                             }
                         }
-                        None => 0,
+                        None => 0.to_biguint().unwrap(),
                     },
-                    None => 0,
+                    None => 0.to_biguint().unwrap(),
                 };
-                let (weight, overflow) = weight.overflowing_add(match node.get_e1() {
+		let weight1 = match node.get_e1() {
                     Some(e1_id) => match previous_level_weigths.get(&e1_id) {
                         Some(weight) => {
-                            if *weight == 0 {
-                                1
+                            if *weight == 0.to_biguint().unwrap() {
+                                1.to_biguint().unwrap()
                             } else {
-                                *weight
+                                weight.clone()
                             }
                         }
-                        None => 0,
+                        None => 0.to_biguint().unwrap(),
                     },
-                    None => 0,
-                });
-                if overflow {
-                    panic!("the bdd has over 2^128 paths")
-                }
-                current_level_weigths.insert(*id, weight);
+                    None => 0.to_biguint().unwrap(),
+                };
+                current_level_weigths.insert(*id, weight0+weight1);
             }
             previous_level_weigths = current_level_weigths;
         }
-        *previous_level_weigths.iter().next().unwrap().1
+        previous_level_weigths.iter().next().unwrap().1.clone()
     }
 
     /// Replace a variable in all the lhs of the bdd by a linear combination.
