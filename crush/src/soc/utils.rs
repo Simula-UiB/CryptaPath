@@ -149,7 +149,7 @@ pub fn build_system_from_spec(mut spec: SystemSpec) -> System {
 /// `e0` and `e1` specs. All the id of the nodes are then reset to initialize `next_id` of the
 /// `Bdd`. Finally we remove any jumping edges by calling `add_same_edge_node_at_level` on all the
 /// levels of the `Bdd`.
-pub fn build_bdd_from_spec(spec: &mut BddSpec,nvar:usize) -> Bdd {
+pub fn build_bdd_from_spec(spec: &mut BddSpec, nvar: usize) -> Bdd {
     let mut bdd = Bdd::new();
     bdd.set_id(spec.id);
     let next_id = spec.levels.iter().fold(0,|last_id,level| 
@@ -240,7 +240,7 @@ named!(pub vars<CompleteStr, Vec<i64>>,
         var
 ));
 
-named!(lhs<CompleteStr,(Vec<i64>)>,
+named!(lhs<CompleteStr,Vec<i64>>,
     do_parse!(
         a:vars>>
         (a)
@@ -324,7 +324,7 @@ pub fn print_bdd_to_graphviz(bdd: &Bdd, path:&PathBuf) {
     writeln!(&mut writer, "edge [style = invis];").unwrap();
     writeln!(&mut writer, "\"CONST NODES\" [style = invis];").unwrap();
     for (i,level) in bdd.iter_levels().enumerate() {
-        write!(&mut writer, "\" {}. ",i).unwrap();
+        write!(&mut writer, "\"{}. ",i).unwrap();
         if level.iter_set_lhs().count() == 0 {
             write!(&mut writer, "0").unwrap();
         } else {
@@ -335,7 +335,7 @@ pub fn print_bdd_to_graphviz(bdd: &Bdd, path:&PathBuf) {
                 write!(&mut writer, "x{}",bit).unwrap();
             }
         }
-        writeln!(&mut writer, "\" -> ").unwrap();
+        write!(&mut writer, "\" -> ").unwrap();
         if i == bdd.iter_levels().count()-2{
             break;
         }
@@ -344,13 +344,13 @@ pub fn print_bdd_to_graphviz(bdd: &Bdd, path:&PathBuf) {
     for (i,level) in bdd.iter_levels().enumerate() {
         write!(&mut writer, "{{ rank = same; \"").unwrap();
         if level.iter_set_lhs().count() == 0 {
-            write!(&mut writer, "0").unwrap();
+            write!(&mut writer, "{}. 0",i).unwrap();
         } else {
             for (j,bit) in level.iter_set_lhs().enumerate() {
                 if j > 0 {
                     write!(&mut writer, " + ").unwrap();
                 }
-                write!(&mut writer, "x{}",bit).unwrap();
+                write!(&mut writer, "{}. x{}",i,bit).unwrap();
             }
         }
         writeln!(&mut writer, "\";").unwrap();
@@ -407,7 +407,7 @@ fn print_bdd_to_file_format(bdd: &Bdd,writer: &mut BufWriter<&File>){
     writeln!(writer,"---").unwrap();
 }
 
-/// Write .bdd representation of a syste to a file at path
+/// Write .bdd representation of a system to a file at path
 pub fn print_system_to_file(system: &System, path: &PathBuf){
     let write_file = File::create(path).unwrap();
     let mut writer = BufWriter::new(&write_file);
